@@ -1,9 +1,12 @@
 import React from "react";
 
-const App = () => (
-  <div className="container">
-    <h1>Hello World, React!</h1>
-  </div>
-);
+import Card from "./card";
 
-export default App;
+export default function App() {
+  return (
+    <div className="container">
+      <h1>Hello World, React!</h1>
+      <Card />
+    </div>
+  );
+}

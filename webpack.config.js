@@ -26,6 +26,10 @@ module.exports = {
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"]
+      },
+      {
+        test: [/\.xml$/, /\.cat$/, /\.ros$/],
+        use: "xml-loader"
       }
     ]
   }
