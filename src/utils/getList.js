@@ -6,6 +6,7 @@ function listSelections() {
   const list = ros.roster.forces[0].force.reduce((forceAcc, force) => {
     return forceAcc.concat(
       force.selections[0].selection.reduce((selectionAcc, selection) => {
+        // console.log(selection.$.name, selection);
         return selection.$.type === "unit" // check if each selection is a unit or upgrade
           ? [
               ...selectionAcc, // if it is a unit, pass back the current array with the the new unit added
@@ -19,7 +20,23 @@ function listSelections() {
                       {}
                     )
                   : { nope: "nada" }, // return something so I know if the stats weren't where they are expected
-              },
+                weapons: selection.selections[0].selection // putting together their weapon profiles
+                  ? selection.selections[0].selection.map((weapon) =>
+                      weapon.profiles[0].profile
+                        ? weapon.profiles[0].profile[0].characteristics[0].characteristic.reduce(
+                            (profileAcc, char) =>
+                              Object.assign(profileAcc, {
+                                [char.$.name]: char._,
+                              }), // turning their weapon profiles into an object with char: value
+                            {
+                              // adding the weapon name to the origional object
+                              name: weapon.profiles[0].profile[0].$.name,
+                            }
+                          )
+                        : { weapon: "nada" }
+                    )
+                  : { nope: "nada" }, // return something so I know if the weapons weren't where they are expected
+              }, // end of the unit object
             ]
           : selectionAcc; // if its not a unit, just return the current array
       }, [])
@@ -33,6 +50,7 @@ function listSelections() {
       ? listAcc
       : [...listAcc, listItem];
   }, []);
+  console.log(uniqueList);
   return uniqueList;
 }
 
