@@ -1,6 +1,6 @@
 import React from "react";
 
-import wh40k from "./assets/wh40k.png";
+import wh40k from "../assets/wh40k.png";
 
 export default function Image(props) {
   const { url } = props;

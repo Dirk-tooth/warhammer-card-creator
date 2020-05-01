@@ -1,5 +1,5 @@
 // import cat from "xml-loader!./test_data/Aeldari - Harlequins.cat";
-import ros from "./test_data/Z - HQ 2000.ros";
+import ros from "../test_data/Z - HQ 2000.ros";
 // import ros from "./test_data/CW + DK Mech Artillery ✅.ros";
 
 function listSelections() {

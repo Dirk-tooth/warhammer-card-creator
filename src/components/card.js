@@ -1,8 +1,8 @@
 import React from "react";
 
-import { list } from "./getList";
+import { list } from "../utils/getList";
 
-import blankCard from "./assets/blank-card.png";
+import blankCard from "../assets/blank-card.png";
 import Title from "./title";
 import Spacer from "./spacer";
 import Image from "./image";
