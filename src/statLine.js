@@ -5,7 +5,6 @@ export default function StatLine(props) {
   return (
     <div
       style={{
-        height: "1.35in",
         width: "100%",
         display: "flex",
       }}
