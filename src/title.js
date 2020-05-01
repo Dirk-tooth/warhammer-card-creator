@@ -5,8 +5,11 @@ export default function Title(props) {
   return (
     <div
       style={{
-        width: "100%",
+        alignItems: "flex-end",
+        display: "flex",
+        fontSize: ".185in",
         height: "0.26in",
+        width: "100%",
       }}
     >
       {title}
