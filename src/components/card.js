@@ -2,6 +2,8 @@ import React from "react";
 
 import { list } from "../utils/getList";
 
+import rosAdapter from "../utils/rosAdapter";
+
 import blankCard from "../assets/blank-card.png";
 import Title from "./title";
 import Spacer from "./spacer";
@@ -10,6 +12,7 @@ import KeyWords from "./keyWords";
 import Rules from "./rules";
 
 export default function Card(props) {
+  rosAdapter();
   return (
     <div>
       CARDS
