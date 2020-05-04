@@ -1,50 +1,67 @@
 import ros from "../test_data/Z - HQ 2000.ros";
 
-function digDeeper(data) {
-  // data = a force for now
+function buildProfileObject(data, initObj) {
+  return data.reduce(
+    (acc, char) => Object.assign(acc, { [char.$.name]: char._ }), // taking down their characteristics into easier to manipulate object; char: value
+    initObj ? initObj : {}
+  );
+}
 
-  // should:
-  // 1) if there is a typeName in the profile, add that to the top level object
-  // 2) if there are more selections underneath, do it again for each of them
+function addToExistingTypeName(profileAcc, profile) {
+  // if that typeName is already in the list, add this profile to it
 
-  // forEach selection in a force, add new item to master object
-  // if that selections $.name matches a key already in master object, skip it
-  // if it does not, add a new key of selection.$.name
-  // its value should be an object of all its profile `typeName`s
-  // each of those `typeName` keys will have values of all the profiles that match
-  // for that selection and all child selections
+  return {
+    ...profileAcc,
+    [profile.$.typeName]: [
+      ...profileAcc[profile.$.typeName],
+      buildProfileObject(profile.characteristics[0].characteristic, {
+        name: profile.$.name,
+      }),
+    ],
+  };
+}
 
-  const force = {};
+function addNewTypeName(profileAcc, profile) {
+  // if it is not already in the list, create the list and add this profile to it
+  return {
+    ...profileAcc,
+    [profile.$.typeName]: [
+      buildProfileObject(profile.characteristics[0].characteristic, {
+        name: profile.$.name,
+      }),
+    ],
+  };
+}
 
-  // console.log(
-  //   "data: ",
-  //   data.selections[0].selection.map((s) => s.$.name)
-  // );
+function reduceSelectionProfiles(profileAcc, profile) {
+  if (profileAcc[profile.$.typeName]) {
+    // if that typeName is already in the list, add this profile to it
+    return addToExistingTypeName(profileAcc, profile);
+  } else {
+    // if it is not already in the list, create the list and add this profile to it
+    return addNewTypeName(profileAcc, profile);
+  }
+}
 
-  data.selections[0].selection.forEach((selection) => {
-    // console.log("selection; ", selection.profiles[0] ? "yep" : "nope");
-    if (selection.$) {
-      if (force[selection.$.name]) {
-        null;
-      } else {
-        force[selection.$.name] = {};
-      }
-    }
-    selection.profiles[0] !== ""
-      ? selection.profiles[0].profile.forEach((item) => {
-          if (item.$) {
-            if (force[selection.$.name][item.$.typeName]) {
-              force[selection.$.name][item.$.typeName].push(
-                item.characteristics[0].characteristic
-              );
-            } else {
-              force[selection.$.name][item.$.typeName] = [
-                item.characteristics[0].characteristic,
-              ];
-            }
-          }
-        })
-      : null;
+function createProfileList(selection) {
+  const mapObj = { name: selection.$.name };
+  if (selection.profiles[0] !== "") {
+    // if there are meaningful profiles
+    return selection.profiles[0].profile.reduce(
+      // create an object with each typeName and and array of profiles matching that typeName
+      (profileAcc, profile) => {
+        return reduceSelectionProfiles(profileAcc, profile);
+      },
+      { name: selection.$.name } // the object starts out with the name of the selection
+    );
+  } else {
+    return { ...mapObj, profiles: false }; // if there are not any meaningful profiles, do nothing
+  }
+}
+
+function createSelectionsList(data) {
+  const force = data.selections[0].selection.map((selection) => {
+    return createProfileList(selection);
   });
 
   console.log("force: ", force);
@@ -54,12 +71,12 @@ function digDeeper(data) {
 export default function rosAdapter() {
   console.log(
     "rosAdapter: ",
-    ros.roster.forces[0].force,
+    // ros.roster.forces[0].force,
     ros.roster.forces[0].force.reduce((acc, force) => {
-      let list = digDeeper(force);
-      console.log("list: ", list);
-      console.log("acc", acc);
-      Object.assign(acc, list);
-    }, {})
+      let list = createSelectionsList(force);
+      // console.log("list: ", list);
+      // console.log("acc", acc);
+      return [...acc, ...list];
+    }, [])
   );
 }
