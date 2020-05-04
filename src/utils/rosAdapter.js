@@ -2,7 +2,7 @@ import ros from "../test_data/Z - HQ 2000.ros";
 
 function buildProfileObject(data, initObj) {
   return data.reduce(
-    (acc, char) => Object.assign(acc, { [char.$.name]: char._ }), // taking down their characteristics into easier to manipulate object; char: value
+    (acc, char) => Object.assign(acc, { [char.$.name]: char._ }),
     initObj ? initObj : {}
   );
 }
@@ -60,12 +60,11 @@ function createProfileList(selection) {
 }
 
 function createSelectionsList(data) {
-  const force = data.selections[0].selection.map((selection) => {
+  return data.selections[0].selection.map((selection) => {
     return createProfileList(selection);
   });
-
-  console.log("force: ", force);
-  return force;
+  // console.log("force: ", force);
+  // return force;
 }
 
 export default function rosAdapter() {
@@ -74,8 +73,6 @@ export default function rosAdapter() {
     // ros.roster.forces[0].force,
     ros.roster.forces[0].force.reduce((acc, force) => {
       let list = createSelectionsList(force);
-      // console.log("list: ", list);
-      // console.log("acc", acc);
       return [...acc, ...list];
     }, [])
   );
