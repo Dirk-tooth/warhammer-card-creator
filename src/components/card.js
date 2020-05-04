@@ -1,5 +1,8 @@
 import React from "react";
 
+// for viewing json prettily during dev
+import ReactJson from "react-json-view";
+
 import { list } from "../utils/getList";
 
 import rosAdapter from "../utils/rosAdapter";
@@ -12,9 +15,10 @@ import KeyWords from "./keyWords";
 import Rules from "./rules";
 
 export default function Card(props) {
-  rosAdapter();
+  const rosAdapterData = rosAdapter();
   return (
     <div>
+      <ReactJson src={rosAdapterData} />
       CARDS
       {list.map((item, idx) => (
         <div

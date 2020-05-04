@@ -44,6 +44,14 @@ function reduceSelectionProfiles(profileAcc, profile) {
 }
 
 function createProfileList(selection) {
+  // console.log(selection);
+  // const subSelectionProfiles =
+  //   selection.selections && selection.selections[0] !== ""
+  //     ? createProfileList(selection.selections[0].selection)
+  //     : null;
+  //
+  // console.log(subSelectionProfiles);
+
   const mapObj = { name: selection.$.name };
   if (selection.profiles[0] !== "") {
     // if there are meaningful profiles
@@ -68,12 +76,16 @@ function createSelectionsList(data) {
 }
 
 export default function rosAdapter() {
-  console.log(
-    "rosAdapter: ",
-    // ros.roster.forces[0].force,
-    ros.roster.forces[0].force.reduce((acc, force) => {
-      let list = createSelectionsList(force);
-      return [...acc, ...list];
-    }, [])
-  );
+  const finalList = ros.roster.forces[0].force.reduce((acc, force) => {
+    let list = createSelectionsList(force);
+    return [...acc, ...list];
+  }, []);
+
+  // console.log(
+  //   "rosAdapter: ",
+  //   // ros.roster.forces[0].force,
+  //   finalList
+  // );
+
+  return finalList;
 }
