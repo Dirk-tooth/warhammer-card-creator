@@ -62,18 +62,9 @@ function createProfileList(selection) {
   }
 }
 
-// function createSelectionsList(data) {
-//   return data.selections[0].selection.map((selection) => {
-//     return recurse(selection);
-//   });
-//   // console.log("force: ", force);
-//   // return force;
-// }
-
 const recursiveVariable = [];
 
 function listSelections(data) {
-  // const selections = [];
   if (data.selections && data.selections[0] !== "") {
     recursiveVariable.push(
       data.selections[0].selection.map((selection) =>
@@ -82,15 +73,13 @@ function listSelections(data) {
     );
     data.selections[0].selection.map((selection) => listSelections(selection));
   } else {
-    // recursiveVariable.push("no more selections");
   }
-  // console.log("selections: ", recursiveVariable);
-  // return selections;
 }
 
 export default function rosAdapter() {
   ros.roster.forces[0].force.map((force) => {
-    force.selections[0].selection.map((selection) => listSelections(selection));
+    // force.selections[0].selection.map((selection) => listSelections(selection));
+    return listSelections(force);
   });
 
   console.log(recursiveVariable);
@@ -99,12 +88,6 @@ export default function rosAdapter() {
     let list = createSelectionsList(force);
     return [...acc, ...list];
   }, []);
-
-  // console.log(
-  //   "rosAdapter: ",
-  //   // ros.roster.forces[0].force,
-  //   finalList
-  // );
 
   return finalList;
 }
