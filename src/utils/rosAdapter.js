@@ -44,16 +44,8 @@ function reduceSelectionProfiles(profileAcc, profile) {
 }
 
 function createProfileList(selection) {
-  // console.log(selection);
-  // const subSelectionProfiles =
-  //   selection.selections && selection.selections[0] !== ""
-  //     ? createProfileList(selection.selections[0].selection)
-  //     : null;
-  //
-  // console.log(subSelectionProfiles);
-
-  const mapObj = { name: selection.$.name };
-  if (selection.profiles[0] !== "") {
+  const mapObj = { name: selection.$ ? selection.$.name : "no name" };
+  if (selection.profiles && selection.profiles[0] !== "") {
     // if there are meaningful profiles
     return selection.profiles[0].profile.reduce(
       // create an object with each typeName and and array of profiles matching that typeName
@@ -63,19 +55,46 @@ function createProfileList(selection) {
       { name: selection.$.name } // the object starts out with the name of the selection
     );
   } else {
-    return { ...mapObj, profiles: false }; // if there are not any meaningful profiles, do nothing
+    return {
+      name: selection.$ ? selection.$.name : "no name",
+      profiles: false,
+    }; // if there are not any meaningful profiles, do nothing
   }
 }
 
-function createSelectionsList(data) {
-  return data.selections[0].selection.map((selection) => {
-    return createProfileList(selection);
-  });
-  // console.log("force: ", force);
-  // return force;
+// function createSelectionsList(data) {
+//   return data.selections[0].selection.map((selection) => {
+//     return recurse(selection);
+//   });
+//   // console.log("force: ", force);
+//   // return force;
+// }
+
+const recursiveVariable = [];
+
+function listSelections(data) {
+  // const selections = [];
+  if (data.selections && data.selections[0] !== "") {
+    recursiveVariable.push(
+      data.selections[0].selection.map((selection) =>
+        createProfileList(selection)
+      )
+    );
+    data.selections[0].selection.map((selection) => listSelections(selection));
+  } else {
+    // recursiveVariable.push("no more selections");
+  }
+  // console.log("selections: ", recursiveVariable);
+  // return selections;
 }
 
 export default function rosAdapter() {
+  ros.roster.forces[0].force.map((force) => {
+    force.selections[0].selection.map((selection) => listSelections(selection));
+  });
+
+  console.log(recursiveVariable);
+
   const finalList = ros.roster.forces[0].force.reduce((acc, force) => {
     let list = createSelectionsList(force);
     return [...acc, ...list];
